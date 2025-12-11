@@ -10,22 +10,23 @@
 </head>
 <body>
 <div class="container">
-<div class="header"><h1><i class="fas fa-tasks"></i> BiAra</h1><div class="subtitle">Tasks & Shopping List Manager</div><button class="btn-reset" onclick="resetAll()" title="Clear all lists"><i class="fas fa-trash-alt"></i> RESET</button></div>
+<div class="header"><h1><i class="fas fa-tasks"></i> BiAra</h1><div class="subtitle">Tasks & Shopping List Manager</div><button class="btn-reset" onclick="resetAll()" title="Clear all lists"><i class="fas fa-redo"></i> RESET</button></div>
 
-<div class="content">
   
-<div class="input-row"><input id="taskInput" placeholder="Enter a task or item to buy..." autocomplete="off"><button class="btn btn-todo" onclick="addTask('todo')"><i class="fas fa-plus-circle"></i> ADD TASK</button><button class="btn btn-buy" onclick="addTask('buy')"><i class="fas fa-cart-plus"></i> ADD ITEM</button></div>
+<div class="input-row">
+<input id="taskInput" placeholder="Enter a task or item to buy..." autocomplete="off"><button class="btn btn-todo" onclick="addTask('todo')"><i class="fas fa-plus-circle"></i> ADD TASK</button><button class="btn btn-buy" onclick="addTask('buy')"><i class="fas fa-cart-plus"></i> ADD ITEM</button>
+</div>
 
 <div class="columns">
 <div class="column"><div class="column-header col-todo"><i class="fas fa-check-circle"></i> To Do<span id="count-todo" class="item-count">(0)</span></div><div id="list-todo" class="task-list"><div class="empty-state"><i class="fas fa-clipboard-list"></i><p>No tasks added yet</p></div></div></div>
 <div class="column"><div class="column-header col-buy"><i class="fas fa-shopping-cart"></i> To Buy<span id="count-buy" class="item-count">(0)</span></div><div id="list-buy" class="task-list"><div class="empty-state"><i class="fas fa-shopping-basket"></i><p>No items to buy yet</p></div></div></div>
 </div>
   
-</div>
-  
+
 <div class="footer"><div class="footer-content"><p><i class="far fa-copyright"></i> <a href="https://serhatkiraz.github.io/">Serhat Kiraz</a></p></div>
 </div>
 <script src="script.js"></script>
 </body>
 </html>
+
 
