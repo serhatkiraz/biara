@@ -1,32 +1,127 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="tr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BiAra | Serhat Kiraz</title>
+<title>BiAra</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f5f7fa;display:flex;justify-content:center;padding:20px;min-height:100vh}
+.app{width:100%;max-width:800px;background:#fff;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1)}
+header{background: linear-gradient(90deg, #4a6ee0, #2ecc71);color:#fff;padding:20px;position:relative}
+header h1{font-size:24px;display:flex;align-items:center;gap:10px}
+#sifirla{position:absolute;top:15px;right:15px;background:rgba(255,255,255,0.2);border:0;color:#fff;padding:8px 15px;border-radius:6px}
+main{padding:20px}
+.giris{display:flex;gap:10px;margin-bottom:25px}
+.giris input{flex:1;padding:14px;border:2px solid #e0e5ec;border-radius:8px}
+.giris button{width:80px;border:0;border-radius:8px;color:#fff;font-size:18px}
+#yapBtn{background:#4a6ee0}
+#alBtn{background:#2ecc71}
+.listeler{display:grid;gap:25px}
+.bolum {margin-bottom: 25px}
+.bolum h3{font-size:20px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+ul{list-style:none}
+li{display:flex;align-items:center;gap:12px;padding:12px 15px;border-radius:8px;margin-bottom:10px}
+#yapilacaklar li{background:#eef2ff}
+#alinacaklar li{background:#f0fff4}
+li.tamamlanan span{text-decoration:line-through;opacity:0.6}
+li span{flex:1}
+.sil{background:none;border:0;color:#ff4757;font-size:18px}
+@media(min-width:600px){.listeler{grid-template-columns:1fr 1fr}}
+</style>
 </head>
 <body>
-<div class="container">
-<div class="header"><h1><i class="fas fa-tasks"></i> BiAra</h1><div class="subtitle">Tasks & Shopping List Manager</div><button class="btn-reset" onclick="resetAll()" title="Clear all lists"><i class="fas fa-redo"></i> RESET</button></div>
-<div class="content">
-<input id="taskInput" placeholder="Enter a task or item to buy..." autocomplete="off"><button class="btn btn-todo" onclick="addTask('todo')"><i class="fas fa-plus-circle"></i> ADD TASK</button><button class="btn btn-buy" onclick="addTask('buy')"><i class="fas fa-cart-plus"></i> ADD ITEM</button>
-<div class="columns">
-<div class="column">
-<div class="column-header col-todo"><i class="fas fa-check-circle"></i> To Do<span id="count-todo" class="item-count">(0)</span></div>
-<div id="list-todo" class="task-list"><div class="empty-state"><i class="fas fa-clipboard-list"></i><p>No tasks added yet</p></div>
+<div class="app">
+<header>
+<button id="sifirla"><i class="fas fa-redo"></i> SIFIRLA</button>
+<h1><i class="fas fa-tasks"></i> BiAra</h1>
+</header>
+<main>
+<div class="giris">
+<input id="yazi" placeholder="Bir şey...">
+<button id="yapBtn"><i class="fas fa-check"></i> YAP</button>
+<button id="alBtn"><i class="fas fa-cart-plus"></i> AL</button>
 </div>
-<div class="column">
-<div class="column-header col-buy"><i class="fas fa-shopping-cart"></i> To Buy<span id="count-buy" class="item-count">(0)</span></div>
-<div id="list-buy" class="task-list"><div class="empty-state"><i class="fas fa-shopping-basket"></i><p>No items to buy yet</p></div>
+<div class="listeler">
+<section class="bolum">
+<h3 style="color:#4a6ee0"><i class="fas fa-check-circle"></i> Yapılacaklar</h3>
+<ul id="yapilacaklar"></ul>
+</section>
+<section class="bolum">
+<h3 style="color:#2ecc71"><i class="fas fa-shopping-cart"></i> Alınacaklar</h3>
+<ul id="alinacaklar"></ul>
+</section>
 </div>
+</main>
 </div>
-<div class="footer"><div class="footer-content"><p><i class="far fa-copyright"></i> <a href="https://serhatkiraz.github.io/">Serhat Kiraz</a></p></div></div>
-</div>
-<script src="script.js"></script>
+<script>
+const yazi=document.getElementById('yazi')
+const yapilacaklar=document.getElementById('yapilacaklar')
+const alinacaklar=document.getElementById('alinacaklar')
+
+const kaydet=()=>{
+localStorage.setItem('yap',JSON.stringify([...yapilacaklar.children].map(li=>({
+metin:li.querySelector('span').textContent,
+tamam:li.classList.contains('tamamlanan')
+}))))
+localStorage.setItem('al',JSON.stringify([...alinacaklar.children].map(li=>({
+metin:li.querySelector('span').textContent,
+tamam:li.classList.contains('tamamlanan')
+}))))
+}
+
+const elemanEkle=(liste,veri)=>{
+const li=document.createElement('li')
+if(veri.tamam) li.classList.add('tamamlanan')
+const kutu=document.createElement('input')
+kutu.type='checkbox'
+kutu.checked=veri.tamam
+kutu.onchange=()=>{li.classList.toggle('tamamlanan');kaydet()}
+const span=document.createElement('span')
+span.textContent=veri.metin
+
+const sil = document.createElement('button')
+sil.className = 'sil'
+const ikon = document.createElement('i')
+ikon.className = 'fas fa-trash'
+sil.appendChild(ikon)
+sil.onclick = () => { 
+    li.remove()
+    kaydet() 
+}
+li.append(kutu, span, sil)
+
+liste.appendChild(li)
+}
+
+const ekle=liste=>{
+if(!yazi.value.trim()) return
+elemanEkle(liste,{metin:yazi.value.trim(),tamam:false})
+yazi.value=''
+kaydet()
+}
+
+yapBtn.onclick=()=>ekle(yapilacaklar)
+alBtn.onclick=()=>ekle(alinacaklar)
+
+sifirla.onclick=()=>{
+if(confirm('Sıfırlansın mı?')){
+yapilacaklar.innerHTML=''
+alinacaklar.innerHTML=''
+localStorage.clear()
+}
+}
+
+onload=()=>{
+JSON.parse(localStorage.getItem('yap')||'[]').forEach(i=>elemanEkle(yapilacaklar,i))
+JSON.parse(localStorage.getItem('al')||'[]').forEach(i=>elemanEkle(alinacaklar,i))
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 </body>
 </html>
-
-
