@@ -1,127 +1,608 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BiAra</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="manifest" href="manifest.json">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#f5f7fa;display:flex;justify-content:center;padding:20px;min-height:100vh}
-.app{width:100%;max-width:800px;background:#fff;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1)}
-header{background: linear-gradient(90deg, #4a6ee0, #2ecc71);color:#fff;padding:20px;position:relative}
-header h1{font-size:24px;display:flex;align-items:center;gap:10px}
-#sifirla{position:absolute;top:15px;right:15px;background:rgba(255,255,255,0.2);border:0;color:#fff;padding:8px 15px;border-radius:6px}
-main{padding:20px}
-.giris{display:flex;gap:10px;margin-bottom:25px}
-.giris input{flex:1;padding:14px;border:2px solid #e0e5ec;border-radius:8px}
-.giris button{width:80px;border:0;border-radius:8px;color:#fff;font-size:18px}
-#yapBtn{background:#4a6ee0}
-#alBtn{background:#2ecc71}
-.listeler{display:grid;gap:25px}
-.bolum {margin-bottom: 25px}
-.bolum h3{font-size:20px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-ul{list-style:none}
-li{display:flex;align-items:center;gap:12px;padding:12px 15px;border-radius:8px;margin-bottom:10px}
-#yapilacaklar li{background:#eef2ff}
-#alinacaklar li{background:#f0fff4}
-li.tamamlanan span{text-decoration:line-through;opacity:0.6}
-li span{flex:1}
-.sil{background:none;border:0;color:#ff4757;font-size:18px}
-@media(min-width:600px){.listeler{grid-template-columns:1fr 1fr}}
-</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#4a6ee0">
+    <meta name="description" content="Yapılacaklar ve alınacaklar listesi uygulaması">
+    <title>BiAra</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✅</text></svg>">
+    <style>
+        :root {
+            --renk1: #4a6ee0;
+            --renk2: #2ecc71;
+            --beyaz: #fff;
+            --kirmizi: #f00;
+            --siyah: #000;
+            --gri: #f5f5f5;
+            --koyu-gri: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--beyaz);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 800px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header, footer {
+            background: linear-gradient(135deg, var(--renk1), var(--renk2));
+            color: var(--beyaz);
+            padding: 1.25rem;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        main {
+            padding: 1.25rem;
+            flex: 1;
+        }
+
+        .giris {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 5.5rem;
+            z-index: 5;
+            background: var(--beyaz);
+            padding: 0.5rem 0;
+        }
+
+        .giris input {
+            flex: 1;
+            padding: 0.875rem;
+            border: 2px solid var(--koyu-gri);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .giris input:focus {
+            border-color: var(--renk1);
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.1);
+        }
+
+        .giris input.hata {
+            border-color: var(--kirmizi);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .giris button {
+            min-width: 50px;
+            color: var(--beyaz);
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 800;
+            padding: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .giris button:active {
+            transform: scale(0.95);
+        }
+
+        #yapBtn {
+            background: var(--renk1);
+        }
+
+        #yapBtn:hover {
+            background: #3a5ed0;
+        }
+
+        #alBtn {
+            background: var(--renk2);
+        }
+
+        #alBtn:hover {
+            background: #25b864;
+        }
+
+        .listeler {
+            display: grid;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .listeler {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        section h3 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid;
+            font-size: 1.25rem;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        #yapilacaklar li {
+            background: linear-gradient(135deg, var(--beyaz), rgba(74, 110, 224, 0.1));
+            border-left: 4px solid var(--renk1);
+        }
+
+        #alinacaklar li {
+            background: linear-gradient(135deg, var(--beyaz), rgba(46, 204, 113, 0.1));
+            border-left: 4px solid var(--renk2);
+        }
+
+        li.tamamlanan {
+            opacity: 0.7;
+        }
+
+        li.tamamlanan span {
+            text-decoration: line-through;
+        }
+
+        li span {
+            flex: 1;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        li input[type="checkbox"] {
+            width: 1.5rem;
+            height: 1.3rem;
+            cursor: pointer;
+            accent-color: var(--koyu-gri);
+        }
+
+        .sil {
+            background: none;
+            border: none;
+            color: var(--kirmizi);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .sil:hover {
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .uyari-container {
+            position: fixed;
+            bottom: 1.25rem;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+            pointer-events: none;
+            word-break: break-word;
+        }
+
+        .uyari {
+            color: var(--beyaz);
+            padding: 0.875rem 1.5rem;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-width: 90%;
+            text-align: center;
+            pointer-events: auto;
+        }
+
+        .uyari.goster {
+            opacity: 1;
+            transform: none;
+        }
+
+        .uyari.basari {
+            background: var(--renk1);
+        }
+
+        .uyari.bilgi {
+            background: var(--renk2);
+        }
+
+        .uyari.hata {
+            background: var(--kirmizi);
+        }
+
+        /* Offline indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--kirmizi);
+            color: var(--beyaz);
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .offline-indicator.goster {
+            transform: translateY(0);
+        }
+
+        /* Empty state */
+        .bos-liste {
+            text-align: center;
+            color: var(--koyu-gri);
+            padding: 2rem;
+            opacity: 0.6;
+        }
+
+        /* Print styles */
+        @media print {
+            .giris, .sil, .uyari-container, footer {
+                display: none !important;
+            }
+
+            li {
+                break-inside: avoid;
+                box-shadow: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <div class="app">
-<header>
-<button id="sifirla"><i class="fas fa-redo"></i> SIFIRLA</button>
-<h1><i class="fas fa-tasks"></i> BiAra</h1>
-</header>
-<main>
-<div class="giris">
-<input id="yazi" placeholder="Bir şey...">
-<button id="yapBtn"><i class="fas fa-check"></i> YAP</button>
-<button id="alBtn"><i class="fas fa-cart-plus"></i> AL</button>
+    <div class="offline-indicator" id="offlineIndicator">Çevrimdışı moddasınız</div>
+
+    <header><h1>BiAra</h1></header>
+
+    <main>
+        <div class="giris">
+            <input id="yazi" placeholder="Bi şey..." autocomplete="off">
+            <button id="yapBtn">Yap</button>
+            <button id="alBtn">Al</button>
+        </div>
+
+        <div class="listeler">
+            <section>
+                <h3 style="color:var(--renk1)">Yapılacaklar</h3>
+                <ul id="yapilacaklar">
+                    <div class="bos-liste">Henüz yapılacak bir şey eklemediniz</div>
+                </ul>
+            </section>
+            <section>
+                <h3 style="color:var(--renk2)">Alınacaklar</h3>
+                <ul id="alinacaklar">
+                    <div class="bos-liste">Henüz alınacak bir şey eklemediniz</div>
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>© BiAra</p>
+    </footer>
+    <div class="uyari-container"></div>
 </div>
-<div class="listeler">
-<section class="bolum">
-<h3 style="color:#4a6ee0"><i class="fas fa-check-circle"></i> Yapılacaklar</h3>
-<ul id="yapilacaklar"></ul>
-</section>
-<section class="bolum">
-<h3 style="color:#2ecc71"><i class="fas fa-shopping-cart"></i> Alınacaklar</h3>
-<ul id="alinacaklar"></ul>
-</section>
-</div>
-</main>
-</div>
+
 <script>
-const yazi=document.getElementById('yazi')
-const yapilacaklar=document.getElementById('yapilacaklar')
-const alinacaklar=document.getElementById('alinacaklar')
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(registration => {
+                console.log('ServiceWorker kayıt başarılı:', registration.scope);
+            }).catch(error => {
+                console.log('ServiceWorker kayıt başarısız:', error);
+            });
+        });
+    }
 
-const kaydet=()=>{
-localStorage.setItem('yap',JSON.stringify([...yapilacaklar.children].map(li=>({
-metin:li.querySelector('span').textContent,
-tamam:li.classList.contains('tamamlanan')
-}))))
-localStorage.setItem('al',JSON.stringify([...alinacaklar.children].map(li=>({
-metin:li.querySelector('span').textContent,
-tamam:li.classList.contains('tamamlanan')
-}))))
-}
+    // Offline detection
+    const offlineIndicator = document.getElementById('offlineIndicator');
 
-const elemanEkle=(liste,veri)=>{
-const li=document.createElement('li')
-if(veri.tamam) li.classList.add('tamamlanan')
-const kutu=document.createElement('input')
-kutu.type='checkbox'
-kutu.checked=veri.tamam
-kutu.onchange=()=>{li.classList.toggle('tamamlanan');kaydet()}
-const span=document.createElement('span')
-span.textContent=veri.metin
+    window.addEventListener('online', () => {
+        offlineIndicator.classList.remove('goster');
+        uyariGoster('Çevrimiçi moda geçildi', 'basari');
+    });
 
-const sil = document.createElement('button')
-sil.className = 'sil'
-const ikon = document.createElement('i')
-ikon.className = 'fas fa-trash'
-sil.appendChild(ikon)
-sil.onclick = () => { 
-    li.remove()
-    kaydet() 
-}
-li.append(kutu, span, sil)
+    window.addEventListener('offline', () => {
+        offlineIndicator.classList.add('goster');
+    });
 
-liste.appendChild(li)
-}
+    // Check initial status
+    if (!navigator.onLine) {
+        offlineIndicator.classList.add('goster');
+    }
 
-const ekle=liste=>{
-if(!yazi.value.trim()) return
-elemanEkle(liste,{metin:yazi.value.trim(),tamam:false})
-yazi.value=''
-kaydet()
-}
+    document.addEventListener('DOMContentLoaded', () => {
+        const yazi = document.getElementById('yazi');
+        const yapilacaklar = document.getElementById('yapilacaklar');
+        const alinacaklar = document.getElementById('alinacaklar');
+        const uyariContainer = document.querySelector('.uyari-container');
+        const yapBtn = document.getElementById('yapBtn');
+        const alBtn = document.getElementById('alBtn');
 
-yapBtn.onclick=()=>ekle(yapilacaklar)
-alBtn.onclick=()=>ekle(alinacaklar)
+        // Bos liste mesajlarını sakla
+        const bosYap = yapilacaklar.querySelector('.bos-liste');
+        const bosAl = alinacaklar.querySelector('.bos-liste');
 
-sifirla.onclick=()=>{
-if(confirm('Sıfırlansın mı?')){
-yapilacaklar.innerHTML=''
-alinacaklar.innerHTML=''
-localStorage.clear()
-}
-}
+        const uyariGoster = (m, t) => {
+            uyariContainer.innerHTML = '';
+            const d = document.createElement('div');
+            d.className = `uyari ${t}`;
+            d.textContent = m;
+            uyariContainer.appendChild(d);
+            setTimeout(() => d.classList.add('goster'), 10);
+            setTimeout(() => d.remove(), 3000);
+        };
 
-onload=()=>{
-JSON.parse(localStorage.getItem('yap')||'[]').forEach(i=>elemanEkle(yapilacaklar,i))
-JSON.parse(localStorage.getItem('al')||'[]').forEach(i=>elemanEkle(alinacaklar,i))
-}
+        const bosListeKontrol = () => {
+            if (yapilacaklar.children.length === 1 && yapilacaklar.contains(bosYap)) {
+                bosYap.style.display = 'block';
+            } else {
+                bosYap.style.display = 'none';
+            }
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
+            if (alinacaklar.children.length === 1 && alinacaklar.contains(bosAl)) {
+                bosAl.style.display = 'block';
+            } else {
+                bosAl.style.display = 'none';
+            }
+        };
+
+        const kaydet = () => {
+            try {
+                localStorage.setItem('yap', JSON.stringify([...yapilacaklar.children]
+                    .filter(li => li.tagName === 'LI')
+                    .map(li => ({
+                        metin: li.querySelector('span').textContent,
+                        tamam: li.classList.contains('tamamlanan')
+                    }))
+                ));
+
+                localStorage.setItem('al', JSON.stringify([...alinacaklar.children]
+                    .filter(li => li.tagName === 'LI')
+                    .map(li => ({
+                        metin: li.querySelector('span').textContent,
+                        tamam: li.classList.contains('tamamlanan')
+                    }))
+                ));
+
+                // IndexedDB'ye de kaydet (opsiyonel, daha büyük veriler için)
+                if ('indexedDB' in window) {
+                    const dbRequest = indexedDB.open('BiAraDB', 1);
+
+                    dbRequest.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains('items')) {
+                            db.createObjectStore('items');
+                        }
+                    };
+
+                    dbRequest.onsuccess = (event) => {
+                        const db = event.target.result;
+                        const transaction = db.transaction(['items'], 'readwrite');
+                        const store = transaction.objectStore('items');
+
+                        store.put({
+                            yap: JSON.parse(localStorage.getItem('yap') || '[]'),
+                            al: JSON.parse(localStorage.getItem('al') || '[]'),
+                            timestamp: new Date().toISOString()
+                        }, 'lists');
+                    };
+                }
+            } catch (error) {
+                console.error('Kaydetme hatası:', error);
+                uyariGoster('Kaydetme sırasında bir hata oluştu', 'hata');
+            }
+        };
+
+        const elemanEkle = (liste, veri, tur) => {
+            const li = document.createElement('li');
+            if (veri.tamam) li.classList.add('tamamlanan');
+
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = veri.tamam;
+            cb.setAttribute('aria-label', `${veri.metin} - ${veri.tamam ? 'Tamamlandı' : 'Tamamlanmadı'}`);
+            cb.onchange = () => {
+                li.classList.toggle('tamamlanan', cb.checked);
+                kaydet();
+                bosListeKontrol();
+            };
+
+            const span = document.createElement('span');
+            span.textContent = veri.metin;
+
+            const sil = document.createElement('button');
+            sil.className = 'sil';
+            sil.textContent = 'Sil';
+            sil.setAttribute('aria-label', `${veri.metin} öğesini sil`);
+            sil.onclick = () => {
+                li.remove();
+                kaydet();
+                bosListeKontrol();
+                uyariGoster('Öğe silindi', 'bilgi');
+            };
+
+            li.append(cb, span, sil);
+
+            // Bos liste mesajını kontrol et ve ekle
+            const bosMesaj = liste.querySelector('.bos-liste');
+            if (bosMesaj) {
+                bosMesaj.style.display = 'none';
+                liste.insertBefore(li, bosMesaj);
+            } else {
+                liste.appendChild(li);
+            }
+
+            if (!veri.tamam) {
+                uyariGoster(
+                    `"${veri.metin}" ${tur === 'yap' ? 'yapılacaklara' : 'alınacaklara'} eklendi`,
+                    tur === 'yap' ? 'basari' : 'bilgi'
+                );
+            }
+
+            bosListeKontrol();
+        };
+
+        const ekle = (liste, tur) => {
+            const metin = yazi.value.trim();
+            if (!metin) {
+                yazi.classList.add('hata');
+                yazi.focus();
+                setTimeout(() => yazi.classList.remove('hata'), 800);
+                return;
+            }
+
+            // Maximum uzunluk kontrolü
+            if (metin.length > 200) {
+                uyariGoster('Metin çok uzun (max 200 karakter)', 'hata');
+                return;
+            }
+
+            elemanEkle(liste, { metin, tamam: false }, tur);
+            yazi.value = '';
+            yazi.focus();
+            kaydet();
+        };
+
+        yapBtn.onclick = () => ekle(yapilacaklar, 'yap');
+        alBtn.onclick = () => ekle(alinacaklar, 'al');
+
+        // Enter tuşu ile ekleme
+        yazi.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                ekle(yapilacaklar, 'yap');
+            }
+        });
+
+        const yukle = (k, l, t) => {
+            try {
+                const data = JSON.parse(localStorage.getItem(k) || '[]');
+                if (data.length === 0) {
+                    bosListeKontrol();
+                    return;
+                }
+
+                data.forEach(i => elemanEkle(l, i, t));
+                bosListeKontrol();
+            } catch (error) {
+                console.error('Yükleme hatası:', error);
+                localStorage.removeItem(k);
+                bosListeKontrol();
+            }
+        };
+
+        // Sayfa yüklendiğinde verileri yükle
+        yukle('yap', yapilacaklar, 'yap');
+        yukle('al', alinacaklar, 'al');
+
+        // İlk odaklamayı input'a ver
+        yazi.focus();
+
+        // PWA yükleme için gecikmeli prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // 5 saniye sonra prompt göster
+            setTimeout(() => {
+                if (deferredPrompt) {
+                    uyariGoster('Uygulamayı ana ekrana eklemek ister misiniz?', 'bilgi');
+
+                    // Prompt'u tetiklemek için buton ekleyebilirsiniz
+                    // Örnek: installButton.style.display = 'block';
+                }
+            }, 5000);
+        });
+
+        // Sayfa görünürlüğü değiştiğinde kaydet
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                kaydet();
+            }
+        });
+
+        // Sayfa kapanırken kaydet
+        window.addEventListener('beforeunload', () => {
+            kaydet();
+        });
+    });
 </script>
 </body>
 </html>
