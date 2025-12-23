@@ -6,34 +6,37 @@
     <meta name="theme-color" content="#4a6ee0">
     <meta name="description" content="Reklamsız çevrimdışı çalışan yapılacaklar ve alınacaklar listesi.">
     <title>BiAra</title>
-
     <style>
         :root{
             --renk-yap:#4a6ee0;
             --renk-al:#2ecc71;
         }
-
-        /* Genel ayarlar */
         *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif;}
         body{
-            background:linear-gradient(90deg, var(--renk-yap), var(--renk-al));
-            min-height:100vh;
-            display:flex;
-            justify-content:center;
-            padding:2rem 0;
-        }
-
-        /* Uygulama kutusu */
-        .app{
+            margin:0;
+            padding:0;
             width:100%;
-            max-width:900px;
-            overflow:hidden;
-            display:flex;
-            flex-direction:column;
-
+            min-height:100vh;
+            background:linear-gradient(90deg, var(--renk-yap), var(--renk-al));
         }
-
-        /* Header */
+        .app {
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        .listeler {
+            display: grid;
+            gap: 1rem; /* küçük boşluk */
+            grid-template-columns: 1fr 1fr; /* default: 2 sütun */
+        }
+        @media (max-width: 767px) {
+            .listeler {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
         header{padding:1.5rem;}
         .giris{
             display:flex;
@@ -52,8 +55,6 @@
         }
         .giris input:focus{border-color:var(--renk-yap);}
         .giris input.hata{border-color:#e74c3c;}
-
-        /* Butonlar */
         .giris button{
             border:none;
             border-radius:12px;
@@ -73,16 +74,7 @@
         }
         #yapBtn{color:var(--renk-yap);}
         #alBtn{color:var(--renk-al);}
-
-        /* Main & listeler */
         main{flex:1;padding:1rem;}
-        .listeler{
-            display:grid;
-            gap:1.5rem;
-        }
-        @media(min-width:768px){.listeler{grid-template-columns:1fr 1fr;}}
-
-        /* Section */
         section{
             padding:1rem;
             border-radius:15px;
@@ -92,8 +84,6 @@
         h3{margin-bottom:1rem;font-size:1.3rem;}
         .yapbas{color:var(--renk-yap);font-weight:600;}
         .albas{color:var(--renk-al);font-weight:600;}
-
-        /* Liste */
         ul{list-style:none;}
         li{
             display:flex;
@@ -109,14 +99,12 @@
         li:hover{background:rgba(0,0,0,0.06);}
         li span{flex:1;word-break:break-word;color:#000;}
         li.tamamlanan{
-            background:rgba(0,0,0,0.15); /* tamamlandığında tüm li arka planı değişir */
+            background:rgba(0,0,0,0.15);
         }
         li.tamamlanan span{
             text-decoration:line-through;
             opacity:.6;
         }
-
-        /* Sil butonu */
         .sil{
             background:#ff4d4d;
             color:#fff;
@@ -128,8 +116,6 @@
             transition:all 0.2s;
         }
         .sil:hover{background:#e63939;}
-
-        /* Boş yazısı */
         .bos{
             text-align:center;
             font-size:1.2rem;
@@ -138,7 +124,6 @@
         }
     </style>
 </head>
-
 <body>
 <div class="app">
     <header>
@@ -148,7 +133,6 @@
             <button id="alBtn">AL</button>
         </div>
     </header>
-
     <main>
         <div class="listeler">
             <section class="yapsec">
@@ -165,19 +149,16 @@
         </div>
     </main>
 </div>
-
 <script>
     const yazi = document.getElementById("yazi");
     const yapUl = document.getElementById("yapilacaklar");
     const alUl  = document.getElementById("alinacaklar");
     const yapBos = document.getElementById("yapBos");
     const alBos  = document.getElementById("alBos");
-
     function bosKontrol(){
         yapBos.style.display = yapUl.children.length ? "none" : "block";
         alBos.style.display  = alUl.children.length  ? "none" : "block";
     }
-
     function kaydet(){
         const data = ul => [...ul.children].map(li=>({
             t:li.querySelector("span").textContent,
@@ -187,36 +168,27 @@
         localStorage.setItem("al",JSON.stringify(data(alUl)));
         bosKontrol();
     }
-
     function elemanEkle(ul,text,kaydetme=true){
         if(!text.trim()){yazi.classList.add("hata");return;}
         yazi.classList.remove("hata");
-
         const li=document.createElement("li");
         const cb=document.createElement("input");
         cb.type="checkbox";
-
         const span=document.createElement("span");
         span.textContent=text;
-
         const sil=document.createElement("button");
         sil.className="sil";
         sil.textContent="SİL";
-
         cb.onchange=()=>{li.classList.toggle("tamamlanan",cb.checked);kaydet();};
         sil.onclick=()=>{li.remove();kaydet();};
-
         li.append(cb,span,sil);
         ul.appendChild(li);
-
         yazi.value="";
         if(kaydetme) kaydet();
     }
-
     document.getElementById("yapBtn").onclick=()=>elemanEkle(yapUl,yazi.value);
     document.getElementById("alBtn").onclick=()=>elemanEkle(alUl ,yazi.value);
     yazi.oninput=()=>yazi.classList.remove("hata");
-
     function yukle(){
         [["yap",yapUl],["al",alUl]].forEach(([k,ul])=>{
             (JSON.parse(localStorage.getItem(k)||"[]")).forEach(o=>{
@@ -227,7 +199,6 @@
         });
         kaydet();
     }
-
     yukle();
 </script>
 </body>
